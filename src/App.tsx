@@ -31,10 +31,15 @@ function App() {
   }
 
   const startTimer = () => {
-    setTimerStart(new Date());
     console.debug(newTimerActivity);
-    invoke("start_timer_command", { activity: newTimerActivity, area: newTimerArea }).then(() => {
-      console.debug("Timer started!");
+    invoke("start_timer_command", { activity: newTimerActivity, area: newTimerArea }).then((response) => {
+      setTimer({
+        start_time: new Date().toISOString(),
+        activity: newTimerActivity,
+        area: newTimerArea,
+      })
+      setTimerStart(new Date());
+      console.debug("Timer started!", response);
       setNewTimerActivity("");
       setNewTimerArea("");
     }).catch((e) => {
@@ -46,6 +51,7 @@ function App() {
     setTimerStart(null);
     invoke("finish_timer_command").then(() => {
       console.debug("Timer stopped!");
+      loadTimersHistory();
     }).catch((e) => {
       console.error(e);
     });
