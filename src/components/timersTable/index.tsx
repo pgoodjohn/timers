@@ -7,6 +7,8 @@ interface TimerTableProps {
 }
 const TimerTable: React.FC<TimerTableProps> = ({ timers }) => {
 
+    console.debug(timers);
+
     return (
         <div className="container mx-auto py-10 max-h-full overflow-y-scroll" >
             <DataTable columns={columns} data={timers} />
