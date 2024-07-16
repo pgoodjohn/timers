@@ -126,15 +126,13 @@ function App() {
       <div className="p-4 flex flex-col w-full">
         {timerStart &&
           <div className="flex flex-col">
-            <div className="flex">
-              <p>Timer started at {timerStart.toLocaleTimeString()}</p>
-            </div>
-            <div className="text-center">
-              <CountdownTimer startDate={timerStart} />
-              <div className="flex flex-col">
-                {timer.activity ?? <p className="text-lg">{timer.activity}</p>}
-                <br />
-                {timer.area ?? <p className="text-sm">{timer.area}</p>}
+            <div className="flex m-auto">
+              <div className="p-4">
+                <CountdownTimer startDate={timerStart} />
+              </div>
+              <div className="flex flex-col p-2 text-center">
+                {timer.activity ? <div className="text-lg">{timer.activity}</div> : <></>}
+                {timer.area ? <div className="text-xs">{timer.area}</div> : <></>}
               </div>
               <div className="max-w-1/4 p-4">
                 <Button onClick={stopTimer}>Stop Timer</Button>
