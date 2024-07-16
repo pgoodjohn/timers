@@ -11,12 +11,15 @@ function App() {
   const [timersHistory, setTimersHistory] = useState<any[]>([]);
   const [newTimerActivity, setNewTimerActivity] = useState<string>("");
   const [newTimerArea, setNewTimerArea] = useState<string>("");
-  const [timer, setTimer] = useState<any>(null)
+  const [timer, setTimer] = useState<any>(null);
+  const [configuration, setConfiguration] = useState<any>(null);
 
-  async function loadConfigurationCommand() {
-    let config: string = await invoke("load_configuration_command");
-
-    console.debug(JSON.parse(config))
+  function loadConfiguration() {
+    invoke("load_configuration_command").then((response) => {
+      const config = JSON.parse(response as string);
+      console.debug("Loaded configuration", config);
+      setConfiguration(config);
+    })
   }
 
   const loadActiveTimer = async () => {
@@ -75,12 +78,26 @@ function App() {
     loadTimersHistory();
   }
 
+  if (configuration === null) {
+    loadConfiguration();
+  }
+
   return (
     <div className="max-h-screen flex">
       <div
-        className="w-1/6 bg-gray-800 text-white p-4 min-h-screen max-h-screen"
+        className="w-1/6 bg-gray-800 text-white min-h-screen max-h-screen flex flex-col"
       >
-        Timers!
+        <p className="p-4">
+          Timers!
+        </p>
+        {configuration &&
+          configuration.developmentMode &&
+          <>
+            <div className="flex-grow"></div>
+            <p className="text-xs text-center text-gray-400">{configuration.version}</p>
+            <p className="bg-red-500 text-white p-2 text-xs text-center">Dev Mode</p>
+          </>
+        }
       </div>
       <div className="p-4 flex flex-col w-full">
         {timerStart &&
@@ -110,10 +127,6 @@ function App() {
         }
         <div>
           <TimerTable timers={timersHistory} />
-        </div>
-        <div className="flex-grow"></div>
-        <div>
-          <Button onClick={loadConfigurationCommand}>Load Configuration</Button>
         </div>
       </div>
     </div>
