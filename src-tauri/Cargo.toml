@@ -1,0 +1,26 @@
+[package]
+name = "timers"
+version = "0.0.0"
+description = "A Tauri App"
+authors = ["you"]
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[build-dependencies]
+tauri-build = { version = "2.0.0-beta", features = [] }
+
+[dependencies]
+tauri = { version = "2.0.0-beta", features = [] }
+tauri-plugin-shell = "2.0.0-beta"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+rusqlite = "0.31.0"
+dirs = "5.0.1"
+r2d2_sqlite = "0.24.0"
+r2d2 = "0.8.10"
+log = "0.4.22"
+plogger = "0.0.1"
+chrono = { version = "0.4.38", features = ["serde"] }
+notify-rust = "4.11.0"
+
