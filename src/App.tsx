@@ -5,14 +5,55 @@ import { Button } from "./components/ui/button";
 import CountdownTimer from "./components/countdownTimer";
 import { Input } from "./components/ui/input";
 import TimerTable from "./components/timersTable";
+import { z } from "zod"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useForm } from "react-hook-form"
+
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormMessage,
+} from "@/components/ui/form"
+
+const formSchema = z.object({
+  activity: z.string().min(0).max(50),
+  area: z.string().min(0).max(50),
+})
 
 function App() {
   const [timerStart, setTimerStart] = useState<Date | null>(null);
   const [timersHistory, setTimersHistory] = useState<any[]>([]);
-  const [newTimerActivity, setNewTimerActivity] = useState<string>("");
-  const [newTimerArea, setNewTimerArea] = useState<string>("");
   const [timer, setTimer] = useState<any>(null);
   const [configuration, setConfiguration] = useState<any>(null);
+
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      activity: "",
+      area: "",
+    },
+  })
+
+  function onSubmit(values: z.infer<typeof formSchema>) {
+    // Do something with the form values.
+    // ✅ This will be type-safe and validated.
+    console.log(values)
+    invoke("start_timer_command", { activity: values.activity, area: values.area }).then((response) => {
+      setTimer({
+        start_time: new Date().toISOString(),
+        activity: values.activity,
+        area: values.area,
+      })
+      setTimerStart(new Date());
+      console.debug("Timer started!", response);
+      values.activity = "";
+      values.area = "";
+    }).catch((e) => {
+      console.error(e);
+    });
+  }
 
   function loadConfiguration() {
     invoke("load_configuration_command").then((response) => {
@@ -28,23 +69,6 @@ function App() {
       console.debug(timer);
       setTimer(timer);
       setTimerStart(new Date(timer.start_time));
-    }).catch((e) => {
-      console.error(e);
-    });
-  }
-
-  const startTimer = () => {
-    console.debug(newTimerActivity);
-    invoke("start_timer_command", { activity: newTimerActivity, area: newTimerArea }).then((response) => {
-      setTimer({
-        start_time: new Date().toISOString(),
-        activity: newTimerActivity,
-        area: newTimerArea,
-      })
-      setTimerStart(new Date());
-      console.debug("Timer started!", response);
-      setNewTimerActivity("");
-      setNewTimerArea("");
     }).catch((e) => {
       console.error(e);
     });
@@ -119,11 +143,35 @@ function App() {
           </div>
         }
         {!timerStart &&
-          <div className="flex">
-            <Input placeholder="Activity" value={newTimerActivity} onChange={(e) => setNewTimerActivity(e.target.value)} />
-            <Input placeholder="Area" value={newTimerArea} onChange={(e) => setNewTimerArea(e.target.value)} />
-            <Button onClick={startTimer}>Start Timer</Button>
-          </div>
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="flex px-8">
+              <FormField
+                control={form.control}
+                name="activity"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <Input placeholder="Activity" {...field} className="mr-4" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="area"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <Input placeholder="Area" {...field} className="mx-2" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <Button type="submit" className="mx-8">Start Timer</Button>
+            </form>
+          </Form>
         }
         <div>
           <TimerTable timers={timersHistory} />
