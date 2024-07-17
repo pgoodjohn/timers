@@ -15,7 +15,6 @@ fn greet(name: &str) -> String {
     format!("Hello, {}! You've been greeted from Rust!", name)
 }
 
-
 fn main() {
     let configuration = configuration::Configuration::load();
     plogger::init(configuration.development_mode);
@@ -41,7 +40,8 @@ fn main() {
             timers::get_active_timer_command,
             timers::load_timer_entries_history_command,
             timers::update_time_entry_activity_command,
-            ])
+            timers::load_activity_statistics_for_date_command,
+        ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

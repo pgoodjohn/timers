@@ -193,3 +193,19 @@ pub fn load_statistics_history_command(
 
     Ok(serde_json::to_string(&statistics).expect("Could not serialize statistics"))
 }
+
+#[tauri::command]
+pub fn load_activity_statistics_for_date_command(
+    db: State<Pool<SqliteConnectionManager>>,
+) -> Result<String, String> {
+    log::debug!("Loading activity statistics for date command handler started");
+
+    let connection = db.get().expect("Failed to get db connection");
+    let now = Utc::now();
+
+    let statistics =
+        statistics::ActivityStatistic::load_activity_statistics_for_date(&connection, now)
+            .expect("Could not load statistics");
+
+    Ok(serde_json::to_string(&statistics).expect("Could not serialize statistics"))
+}

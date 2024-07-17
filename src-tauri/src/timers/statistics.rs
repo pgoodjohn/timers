@@ -1,6 +1,43 @@
 use chrono::{DateTime, Duration, Utc};
 use rusqlite::{Connection, OptionalExtension, Result, Row};
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
+
+#[derive(Serialize, Deserialize, Debug)]
+pub struct ActivityStatistic {
+    pub activity: String,
+    pub total_duration: i32,
+    pub total_timers: i32,
+}
+
+impl ActivityStatistic {
+    pub fn load_activity_statistics_for_date(
+        conn: &Connection,
+        date: DateTime<Utc>,
+    ) -> Result<Vec<ActivityStatistic>> {
+        let date_string = date.format("%Y-%m-%d").to_string();
+
+        let mut stmt = conn.prepare(
+            "SELECT activity, SUM(duration) as total_duration, COUNT(*) as total_timers FROM timers WHERE date(start_time) = date(?1) GROUP BY activity",
+        )?;
+
+        let rows = stmt.query_map(rusqlite::params![date_string], Self::from_row)?;
+
+        let mut result = Vec::new();
+        for row in rows {
+            result.push(row?);
+        }
+
+        Ok(result)
+    }
+
+    fn from_row(row: &Row) -> Result<Self> {
+        Ok(Self {
+            activity: row.get(0)?,
+            total_duration: row.get(1)?,
+            total_timers: row.get(2)?,
+        })
+    }
+}
 
 #[derive(Debug, Serialize)]
 pub struct TimerStatistic {
