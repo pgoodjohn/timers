@@ -1,26 +1,12 @@
 import { useState } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import "./globals.css";
-import { Button } from "./components/ui/button";
-import { Input } from "./components/ui/input";
 import TimerTable from "./components/timersTable";
 import { z } from "zod"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
 
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormMessage,
-} from "@/components/ui/form"
 import ActiveTimer from "./components/activeTimer";
+import NewTimerForm from "./components/newTimer";
 
-const formSchema = z.object({
-  activity: z.string().min(0).max(50),
-  area: z.string().min(0).max(50),
-})
 
 function formatDuration(duration: number): string {
   const hours = Math.floor(duration / 3600);
@@ -41,12 +27,9 @@ function App() {
   const [configuration, setConfiguration] = useState<any>(null);
   const [dailyStatistics, setDailyStatistics] = useState<any>(null);
 
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      activity: "",
-      area: "",
-    },
+  const formSchema = z.object({
+    activity: z.string().min(0).max(50),
+    area: z.string().min(0).max(50),
   })
 
   function onSubmit(values: z.infer<typeof formSchema>) {
@@ -171,43 +154,7 @@ function App() {
               <ActiveTimer timer={timer} stopTimer={stopTimer} />
             }
             {/* Form to start a new timer */}
-            {!timer &&
-              <div className="flex">
-                <Form {...form}>
-                  <form onSubmit={form.handleSubmit(onSubmit)} className="flex">
-                    <div className="flex flex-col">
-                      <FormField
-                        control={form.control}
-                        name="activity"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormControl>
-                              <Input placeholder="Activity" {...field} className="" />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={form.control}
-                        name="area"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormControl>
-                              <Input placeholder="Area" {...field} className="" />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </div>
-                    <div className="m-auto">
-                      <Button type="submit" className="mx-8">Start Timer</Button>
-                    </div>
-                  </form>
-                </Form>
-              </div>
-            }
+            <NewTimerForm timer={timer} onSubmit={onSubmit} />
           </div>
         </div>
         <div>
