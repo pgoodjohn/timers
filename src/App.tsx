@@ -149,11 +149,8 @@ function App() {
               )}
             </div>
           </div>
-          <div className="w-full"> {/* Timer start and current status*/}
-            {timer &&
-              <ActiveTimer timer={timer} stopTimer={stopTimer} />
-            }
-            {/* Form to start a new timer */}
+          <div className="w-full"> 
+            <ActiveTimer timer={timer} stopTimer={stopTimer} />
             <NewTimerForm timer={timer} onSubmit={onSubmit} />
           </div>
         </div>

@@ -1,6 +1,7 @@
 import React from 'react';
 import CountdownTimer from "./countdownTimer";
 import { Button } from "./ui/button";
+import { Input } from "./ui/input";
 
 interface CountdownTimerProps {
     timer?: any;
@@ -12,16 +13,18 @@ const ActiveTimer: React.FC<CountdownTimerProps> = ({ timer, stopTimer }) => {
     return (
         <>
             {timer &&
-                <div className="flex justify-between align-middle p-6">
-                    <div>
+                <div className="flex p-6 w-full">
+                    <div className='px-2'>
+                        <Input placeholder="Activity" />
+                    </div>
+                    <div className='px-2'>
+                        <Input placeholder="Area" />
+                    </div>
+                    <div className="px-4 py-1 text-center align-middle">
                         <CountdownTimer startDate={new Date(timer.start_time)} />
                     </div>
-                    <div className="flex flex-col text-center">
-                        {timer.activity ? <div className="text-lg">{timer.activity}</div> : <></>}
-                        {timer.area ? <div className="text-xs">{timer.area}</div> : <></>}
-                    </div>
-                    <div className="max-w-1/4">
-                        <Button onClick={stopTimer}>Stop Timer</Button>
+                    <div className="flex-grow">
+                        <Button className="w-full" onClick={stopTimer}>Stop Timer</Button>
                     </div>
                 </div>
             }
