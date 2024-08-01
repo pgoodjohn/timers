@@ -38,7 +38,7 @@ const CountdownTimer: React.FC<CountdownTimerProps> = ({ startDate }) => {
 
     return (
         <div>
-            <p className='text-xl'>
+            <p className='text-xl font-mono'>
                 {formatTime(timeRemaining)}
             </p>
         </div>

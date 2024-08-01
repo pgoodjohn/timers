@@ -2,7 +2,6 @@ import { useState } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import "./globals.css";
 import { Button } from "./components/ui/button";
-import CountdownTimer from "./components/countdownTimer";
 import { Input } from "./components/ui/input";
 import TimerTable from "./components/timersTable";
 import { z } from "zod"
@@ -36,8 +35,8 @@ function formatDuration(duration: number): string {
 }
 
 function App() {
-  const [timerStart, setTimerStart] = useState<Date | null>(null);
   const [timersHistory, setTimersHistory] = useState<any[]>([]);
+  const [activeTimerChecked, setActiveTimerChecked] = useState<boolean>(false);
   const [timer, setTimer] = useState<any>(null);
   const [configuration, setConfiguration] = useState<any>(null);
   const [dailyStatistics, setDailyStatistics] = useState<any>(null);
@@ -60,7 +59,6 @@ function App() {
         activity: values.activity,
         area: values.area,
       })
-      setTimerStart(new Date());
       console.debug("Timer started!", response);
       values.activity = "";
       values.area = "";
@@ -82,7 +80,6 @@ function App() {
       const timer = JSON.parse(activeTimer as string);
       console.debug(timer);
       setTimer(timer);
-      setTimerStart(new Date(timer.start_time));
     }).catch((e) => {
       console.error(e);
     });
@@ -99,7 +96,7 @@ function App() {
   }
 
   const stopTimer = () => {
-    setTimerStart(null);
+    setTimer(null);
     invoke("finish_timer_command").then(() => {
       console.debug("Timer stopped!");
       loadTimersHistory();
@@ -119,12 +116,13 @@ function App() {
     });
   }
 
-  if (timerStart === null) {
-    loadActiveTimer();
-  }
-
   if (timersHistory.length === 0) {
     loadTimersHistory();
+  }
+
+  if (activeTimerChecked === false) {
+    loadActiveTimer();
+    setActiveTimerChecked(true)
   }
 
   if (configuration === null) {
@@ -168,12 +166,12 @@ function App() {
               )}
             </div>
           </div>
-          <div className="m-auto"> {/* Timer start and current status*/}
-            {timerStart &&
+          <div className="w-full"> {/* Timer start and current status*/}
+            {timer &&
               <ActiveTimer timer={timer} stopTimer={stopTimer} />
             }
             {/* Form to start a new timer */}
-            {!timerStart &&
+            {!timer &&
               <div className="flex">
                 <Form {...form}>
                   <form onSubmit={form.handleSubmit(onSubmit)} className="flex">
