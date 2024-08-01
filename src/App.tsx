@@ -16,6 +16,7 @@ import {
   FormItem,
   FormMessage,
 } from "@/components/ui/form"
+import ActiveTimer from "./components/activeTimer";
 
 const formSchema = z.object({
   activity: z.string().min(0).max(50),
@@ -169,20 +170,7 @@ function App() {
           </div>
           <div className="m-auto"> {/* Timer start and current status*/}
             {timerStart &&
-              <div className="flex flex-col">
-                <div className="flex m-auto">
-                  <div className="p-4">
-                    <CountdownTimer startDate={timerStart} />
-                  </div>
-                  <div className="flex flex-col p-2 text-center">
-                    {timer.activity ? <div className="text-lg">{timer.activity}</div> : <></>}
-                    {timer.area ? <div className="text-xs">{timer.area}</div> : <></>}
-                  </div>
-                  <div className="max-w-1/4 p-4">
-                    <Button onClick={stopTimer}>Stop Timer</Button>
-                  </div>
-                </div>
-              </div>
+              <ActiveTimer timer={timer} stopTimer={stopTimer} />
             }
             {/* Form to start a new timer */}
             {!timerStart &&
