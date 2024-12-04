@@ -15,10 +15,10 @@ const ActiveTimer: React.FC<CountdownTimerProps> = ({ timer, stopTimer }) => {
             {timer &&
                 <div className="flex p-6 w-full">
                     <div className='px-2'>
-                        <Input placeholder="Activity" />
+                        <Input placeholder="Activity" value={timer.activity} />
                     </div>
                     <div className='px-2'>
-                        <Input placeholder="Area" />
+                        <Input placeholder="Area" value={timer.area} />
                     </div>
                     <div className="px-4 py-1 text-center align-middle">
                         <CountdownTimer startDate={new Date(timer.start_time)} />

@@ -36,6 +36,16 @@ function App() {
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
     console.log(values)
+
+
+    if (timer) {
+      stopTimer();
+      values.activity = "";
+      values.area = "";
+      return;
+    } 
+
+
     invoke("start_timer_command", { activity: values.activity, area: values.area }).then((response) => {
       setTimer({
         start_time: new Date().toISOString(),
@@ -150,7 +160,7 @@ function App() {
             </div>
           </div>
           <div className="w-full"> 
-            <ActiveTimer timer={timer} stopTimer={stopTimer} />
+            {/* <ActiveTimer timer={timer} stopTimer={stopTimer} /> */}
             <NewTimerForm timer={timer} onSubmit={onSubmit} />
           </div>
         </div>

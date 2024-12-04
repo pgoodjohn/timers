@@ -12,6 +12,7 @@ import {
     FormItem,
     FormMessage,
 } from "@/components/ui/form"
+import CountdownTimer from "./countdownTimer";
 
 interface NewTimerFormProps {
     timer?: any;
@@ -35,7 +36,6 @@ const NewTimerForm: React.FC<NewTimerFormProps> = ({ timer, onSubmit }) => {
 
     return (
         <>
-            {timer === null &&
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)} className="flex p-6 w-full">
                         <FormField
@@ -44,7 +44,7 @@ const NewTimerForm: React.FC<NewTimerFormProps> = ({ timer, onSubmit }) => {
                             render={({ field }) => (
                                 <FormItem className="px-2">
                                     <FormControl>
-                                        <Input placeholder="Activity" {...field} className="" />
+                                        <Input placeholder={timer ? timer.activity : "Activity"} {...field} className="" />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -56,18 +56,27 @@ const NewTimerForm: React.FC<NewTimerFormProps> = ({ timer, onSubmit }) => {
                             render={({ field }) => (
                                 <FormItem className="px-2">
                                     <FormControl>
-                                        <Input placeholder="Area" {...field} className="" />
+                                        <Input placeholder={timer ? timer.activity : "Area"} {...field} className="" />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
                             )}
                         />
+                        {timer &&
+                            <div className="px-4 py-1 text-center align-middle">
+                                <CountdownTimer startDate={new Date(timer.start_time)} />
+                            </div>
+                        }
                         <div className="flex-grow">
-                            <Button type="submit" className="w-full">Start Timer</Button>
+                            {timer &&
+                                <Button type="submit" className="w-full">Stop Timer</Button>
+                            }
+                            {timer === null &&
+                                <Button type="submit" className="w-full">Start Timer</Button>
+                            }
                         </div>
                     </form>
                 </Form>
-            }
         </>
     )
 }
